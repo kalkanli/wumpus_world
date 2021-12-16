@@ -1,34 +1,27 @@
-
-
 action(1,forward).
-action(2,forward).
-action(3,forward).
-action(4,counterClockWise).
-action(5,forward).
-action(6,counterClockWise).
-action(7,forward).
+action(2,counterClockWise).
+action(3,counterClockWise).
+action(4,forward).
+action(5,counterClockWise).
+action(6,forward).
+action(7,counterClockWise).
 action(8,forward).
 action(9,forward).
 action(10,counterClockWise).
-action(11,forward).
-action(12,forward).
-action(13,forward).
-action(14,forward).
-action(15,forward).
-action(16,forward).
-action(17,forward).
-action(18,forward).
-action(19,counterClockWise).
-action(20,forward).
-action(21,counterClockWise).
-action(22,forward).
-pitBreeze(10).
-pitBreeze(11).
-bump(19).
-wumpusSmell(21).
-wumpusSmell(22).
+action(11,attack).
+wumpusSmell(2).
+wumpusSmell(3).
+wumpusSmell(4).
+pitBreeze(7).
+pitBreeze(8).
+foodSmell(10).
+wumpusSmell(10).
+foodSmell(11).
+wumpusSmell(11).
 
-location(1,4,2).
+bump(-1).
+
+location(1,1,1).
 location(T1,R,C) :-
   T0  is T1 - 1,
   RN  is R - 1,
@@ -44,7 +37,7 @@ location(T1,R,C) :-
     ((action(T0,attack);action(T0,forward)), dir(T0,east),  not(bump(T1)), location(T0,R,CW))
   ).
 
-dir(1,north).
+dir(1,east).
 dir(T1,north) :-
   T0 is T1 - 1,
 		(
@@ -77,10 +70,6 @@ dir(T1,west) :-
 				(action(T0,counterClockWise), dir(T0,north))
 		).
 
-
-/* Wall variables related */
-% isWall(T,R,C) :- 
-% 	isWall(R,C).
 
 isWall(X,Y) :-
 	(
@@ -130,28 +119,74 @@ hasNotPit(_,X,Y) :-
 		)
 	).
 
-% hasNotPit(-1,X,Y).
+
+hasPit(_,X,Y) :- 
+	(
+		pitBreeze(T0),
+		XN is X-1,
+		XS is X+1,
+		YE is Y+1,
+		YW is Y-1,
+		(
+			location(T0, XN, Y);
+			location(T0, XS, Y);
+			location(T0, X, YE);
+			location(T0, X, YW)
+		),
+		(
+			not(isWall(X, Y)),
+			not(hasBeenToLocation(X,Y))
+		)
+	).
+
+hasWumpus(_,X,Y) :- 
+	(
+		wumpusSmell(T0),
+		XN is X-1,
+		XS is X+1,
+		YE is Y+1,
+		YW is Y-1,
+		(
+			location(T0, XN, Y);
+			location(T0, XS, Y);
+			location(T0, X, YE);
+			location(T0, X, YW)
+		),
+		(
+			not(isWall(X, Y)),
+			not(hasBeenToLocation(X,Y))
+		)
+	).
+
+hasBeenToLocation(X,Y) :-
+	hasBeenToLocation(1,X,Y).
+
+hasBeenToLocation(T,X,Y) :-
+	T1 is T+1,
+	action(T, _),
+	(
+		location(T, X, Y);
+		hasBeenToLocation(T1,X,Y)
+	).
+
+hasDeadWumpus(_,X,Y) :-
+	XN is X-1,
+	XS is X+1,
+	YE is Y+1,
+	YW is Y-1,
+	hasWumpus(_,X,Y),
+	action(T0, attack),
+	(
+		(dir(T0, east), location(T0, X, YW));
+		(dir(T0, west), location(T0, X, YE));
+		(dir(T0, north), location(T0, XS, Y));
+		(dir(T0, south), location(T0, XN, Y))
+	).
 
 
-% isClear(T,R,C) :-     % change in Q1
-% 		hasNotWumpus(T,R,C), 
-% 		hasNotPit(T,R,C),
-% 		not(isWall(R,C)).
-
-% bump(-1).
-
-% hasNotWumpus(T,X,Y).   % change in Q2
-% hasNotPit(-1,X,Y).    % change in Q2
-
-% hasPit(-1,X,Y).       % change in Q3
-% hasWumpus(-1,X,Y).     % change in Q3
-% hasDeadWumpus(-1,X,Y). % change in Q3
 
 % hasFood(-1,X,Y).      % change in Q4
 % hasNotFood(T,X,Y).    % change in Q4
-
-% isWall(-1,-1).
-% isWall(-1,-1,-1).
 
 
 
