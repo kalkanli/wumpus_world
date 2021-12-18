@@ -1,26 +1,3 @@
-location(1,1,1).
-dir(1,east).
-action(1,forward).
-action(2,counterClockWise).
-action(3,counterClockWise).
-action(4,forward).
-action(5,counterClockWise).
-action(6,forward).
-action(7,counterClockWise).
-action(8,forward).
-action(9,forward).
-action(10,counterClockWise).
-action(11,attack).
-wumpusSmell(2).
-wumpusSmell(3).
-wumpusSmell(4).
-pitBreeze(7).
-pitBreeze(8).
-foodSmell(10).
-wumpusSmell(10).
-foodSmell(11).
-wumpusSmell(11).
-
 location(T1,R,C) :-
   T0  is T1 - 1,
   RN  is R - 1,
